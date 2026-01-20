@@ -1,0 +1,52 @@
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Outer glow -->
+  <defs>
+    <radialGradient id="outerGlow" cx="50%" cy="50%">
+      <stop offset="0%" style="stop-color:#ff4500;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#8b0000;stop-opacity:0" />
+    </radialGradient>
+    <radialGradient id="eyeGlow" cx="50%" cy="50%">
+      <stop offset="0%" style="stop-color:#fff700;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#ff8c00;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ff4500;stop-opacity:1" />
+    </radialGradient>
+    <linearGradient id="pupil" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#000000;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#4a0000;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background glow circle -->
+  <circle cx="100" cy="100" r="95" fill="url(#outerGlow)"/>
+  
+  <!-- Outer ring (braided rope) -->
+  <circle cx="100" cy="100" r="85" fill="none" stroke="#2a1810" stroke-width="8"/>
+  <circle cx="100" cy="100" r="85" fill="none" stroke="#3a2520" stroke-width="6" stroke-dasharray="10,5"/>
+  
+  <!-- Middle flame ring -->
+  <circle cx="100" cy="100" r="70" fill="none" stroke="#ff6600" stroke-width="3" opacity="0.8"/>
+  <circle cx="100" cy="100" r="68" fill="none" stroke="#ff4500" stroke-width="2" opacity="0.6"/>
+  
+  <!-- Eye white/background -->
+  <ellipse cx="100" cy="100" rx="55" ry="45" fill="url(#eyeGlow)"/>
+  
+  <!-- Flames around eye -->
+  <path d="M 100 55 Q 95 45 100 35 Q 105 45 100 55" fill="#ff8c00" opacity="0.9"/>
+  <path d="M 145 85 Q 155 80 165 85 Q 155 90 145 85" fill="#ff8c00" opacity="0.9"/>
+  <path d="M 145 115 Q 155 120 165 115 Q 155 110 145 115" fill="#ff8c00" opacity="0.9"/>
+  <path d="M 100 145 Q 95 155 100 165 Q 105 155 100 145" fill="#ff8c00" opacity="0.9"/>
+  <path d="M 55 115 Q 45 120 35 115 Q 45 110 55 115" fill="#ff8c00" opacity="0.9"/>
+  <path d="M 55 85 Q 45 80 35 85 Q 45 90 55 85" fill="#ff8c00" opacity="0.9"/>
+  
+  <!-- Eye outline -->
+  <ellipse cx="100" cy="100" rx="55" ry="45" fill="none" stroke="#ff4500" stroke-width="3"/>
+  
+  <!-- Pupil (vertical slit) -->
+  <ellipse cx="100" cy="100" rx="12" ry="35" fill="url(#pupil)"/>
+  <ellipse cx="100" cy="100" rx="10" ry="33" fill="#000000"/>
+  
+  <!-- Pupil highlight -->
+  <ellipse cx="95" cy="85" rx="3" ry="8" fill="#ff8800" opacity="0.6"/>
+</svg>
+
+

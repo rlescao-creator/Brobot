@@ -1,0 +1,70 @@
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Red moon gradient -->
+    <radialGradient id="moonGlow" cx="50%" cy="50%">
+      <stop offset="0%" style="stop-color:#fff5e6;stop-opacity:1" />
+      <stop offset="40%" style="stop-color:#ffcb77;stop-opacity:1" />
+      <stop offset="70%" style="stop-color:#ff6b35;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8b0000;stop-opacity:0.8" />
+    </radialGradient>
+    
+    <!-- Outer glow -->
+    <radialGradient id="outerGlow" cx="50%" cy="50%">
+      <stop offset="0%" style="stop-color:#ff4500;stop-opacity:0.6" />
+      <stop offset="100%" style="stop-color:#000000;stop-opacity:0" />
+    </radialGradient>
+    
+    <!-- Samurai silhouette gradient -->
+    <linearGradient id="samuraiGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a0000;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#000000;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background dark red glow -->
+  <circle cx="100" cy="100" r="100" fill="url(#outerGlow)"/>
+  
+  <!-- Red moon -->
+  <circle cx="100" cy="80" r="45" fill="url(#moonGlow)" opacity="0.95"/>
+  <circle cx="100" cy="80" r="45" fill="none" stroke="#ff6b35" stroke-width="2" opacity="0.6"/>
+  
+  <!-- Atmospheric rays -->
+  <line x1="100" y1="35" x2="100" y2="25" stroke="#ff6b35" stroke-width="1" opacity="0.4"/>
+  <line x1="130" y1="50" x2="140" y2="45" stroke="#ff6b35" stroke-width="1" opacity="0.4"/>
+  <line x1="145" y1="80" x2="155" y2="80" stroke="#ff6b35" stroke-width="1" opacity="0.4"/>
+  <line x1="70" y1="50" x2="60" y2="45" stroke="#ff6b35" stroke-width="1" opacity="0.4"/>
+  <line x1="55" y1="80" x2="45" y2="80" stroke="#ff6b35" stroke-width="1" opacity="0.4"/>
+  
+  <!-- Samurai silhouette -->
+  <!-- Head/helmet -->
+  <ellipse cx="100" cy="130" rx="12" ry="15" fill="url(#samuraiGrad)"/>
+  
+  <!-- Helmet ornament/crest -->
+  <path d="M 95 120 L 100 110 L 105 120 Z" fill="url(#samuraiGrad)"/>
+  
+  <!-- Shoulders/armor -->
+  <path d="M 75 145 Q 85 140 100 140 Q 115 140 125 145 L 120 155 Q 110 150 100 150 Q 90 150 80 155 Z" fill="url(#samuraiGrad)"/>
+  
+  <!-- Torso -->
+  <path d="M 80 155 L 85 175 L 90 195 L 110 195 L 115 175 L 120 155 Z" fill="url(#samuraiGrad)"/>
+  
+  <!-- Sword handle (katana on hip) -->
+  <rect x="105" y="165" width="20" height="3" fill="#2a0000" transform="rotate(-20 115 167)"/>
+  
+  <!-- Cape/cloak edge -->
+  <path d="M 75 145 Q 70 160 68 180 L 72 185" stroke="url(#samuraiGrad)" stroke-width="2" fill="none"/>
+  <path d="M 125 145 Q 130 160 132 180 L 128 185" stroke="url(#samuraiGrad)" stroke-width="2" fill="none"/>
+  
+  <!-- Armor plates detail -->
+  <line x1="85" y1="160" x2="85" y2="170" stroke="#1a0000" stroke-width="1" opacity="0.5"/>
+  <line x1="90" y1="160" x2="90" y2="175" stroke="#1a0000" stroke-width="1" opacity="0.5"/>
+  <line x1="95" y1="160" x2="95" y2="180" stroke="#1a0000" stroke-width="1" opacity="0.5"/>
+  <line x1="105" y1="160" x2="105" y1="180" stroke="#1a0000" stroke-width="1" opacity="0.5"/>
+  <line x1="110" y1="160" x2="110" y2="175" stroke="#1a0000" stroke-width="1" opacity="0.5"/>
+  <line x1="115" y1="160" x2="115" y2="170" stroke="#1a0000" stroke-width="1" opacity="0.5"/>
+  
+  <!-- Ground mist -->
+  <ellipse cx="100" cy="195" rx="35" ry="3" fill="#1a0000" opacity="0.3"/>
+</svg>
+
+
