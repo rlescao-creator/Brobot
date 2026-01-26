@@ -122,7 +122,6 @@ export default function WomanslatorPage() {
     whatToDo: string;
   } | null>(null);
   const [copySuccess, setCopySuccess] = useState(false);
-  const [language, setLanguage] = useState<string>('en');
 
   useEffect(() => {
     const user = localStorage.getItem('brobot_user');
@@ -131,18 +130,7 @@ export default function WomanslatorPage() {
     } else {
       window.location.href = '/';
     }
-    
-    // Load saved language preference
-    const savedLang = localStorage.getItem('womanslator_language');
-    if (savedLang) {
-      setLanguage(savedLang);
-    }
   }, []);
-
-  const handleLanguageChange = (lang: string) => {
-    setLanguage(lang);
-    localStorage.setItem('womanslator_language', lang);
-  };
 
   const handleQuickExample = (example: string) => {
     setInputText(example);
@@ -158,7 +146,7 @@ export default function WomanslatorPage() {
       const response = await fetch('/api/womanslator', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: inputText, language }),
+        body: JSON.stringify({ text: inputText }),
       });
 
       if (!response.ok) throw new Error('Translation failed');
@@ -191,7 +179,7 @@ export default function WomanslatorPage() {
     return <div className="min-h-screen bg-black"></div>;
   }
 
-  const t = TRANSLATIONS[language as keyof typeof TRANSLATIONS];
+  const t = TRANSLATIONS.en;
 
   return (
     <div className="min-h-screen bg-black text-white relative overflow-hidden">
@@ -222,38 +210,6 @@ export default function WomanslatorPage() {
             </div>
           </div>
           <div className="flex items-center gap-3">
-            {/* Language Selector */}
-            <div className="flex items-center gap-2 bg-zinc-900/90 backdrop-blur-sm border border-zinc-800/60 rounded-xl px-3 py-2">
-              <button
-                onClick={() => handleLanguageChange('en')}
-                className={`text-2xl transition-all duration-300 hover:scale-125 ${language === 'en' ? 'scale-110 opacity-100' : 'opacity-40 hover:opacity-70'}`}
-                title="English"
-              >
-                🇬🇧
-              </button>
-              <button
-                onClick={() => handleLanguageChange('fr')}
-                className={`text-2xl transition-all duration-300 hover:scale-125 ${language === 'fr' ? 'scale-110 opacity-100' : 'opacity-40 hover:opacity-70'}`}
-                title="Français"
-              >
-                🇫🇷
-              </button>
-              <button
-                onClick={() => handleLanguageChange('es')}
-                className={`text-2xl transition-all duration-300 hover:scale-125 ${language === 'es' ? 'scale-110 opacity-100' : 'opacity-40 hover:opacity-70'}`}
-                title="Español"
-              >
-                🇪🇸
-              </button>
-              <button
-                onClick={() => handleLanguageChange('de')}
-                className={`text-2xl transition-all duration-300 hover:scale-125 ${language === 'de' ? 'scale-110 opacity-100' : 'opacity-40 hover:opacity-70'}`}
-                title="Deutsch"
-              >
-                🇩🇪
-              </button>
-            </div>
-
             {/* Navigation Links */}
             <div className="flex items-center gap-2">
               <a

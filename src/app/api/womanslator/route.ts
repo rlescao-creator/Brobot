@@ -1177,7 +1177,7 @@ END OF WOMANSLATOR PROMPT
 
 export async function POST(req: Request) {
   try {
-    const { text, language = 'en' } = await req.json();
+    const { text } = await req.json();
 
     if (!text || !text.trim()) {
       return Response.json(
@@ -1186,149 +1186,24 @@ export async function POST(req: Request) {
       );
     }
 
-    // Language mapping
-    const languageNames: { [key: string]: string } = {
-      'en': 'English',
-      'fr': 'French',
-      'es': 'Spanish',
-      'de': 'German'
-    };
-
-    // Language-specific header translations for parsing
-    const headerTranslations: { [key: string]: { [key: string]: string[] } } = {
-      'fr': {
-        'sheMeans': ['SHE MEANS', 'ELLE VEUT DIRE', 'CE QU\'ELLE VEUT DIRE'],
-        'whatItMeans': ['WHAT IT MEANS', 'CELA SIGNIFIE', 'CE QUE CELA SIGNIFIE'],
-        'why': ['WHY', 'POURQUOI'],
-        'sayThis': ['SAY THIS', 'DIS CECI', 'RÉPONDS CECI'],
-        'whatToDo': ['WHAT TO DO', 'QUOI FAIRE', 'QUE FAIRE']
-      },
-      'es': {
-        'sheMeans': ['SHE MEANS', 'ELLA SIGNIFICA', 'LO QUE ELLA SIGNIFICA'],
-        'whatItMeans': ['WHAT IT MEANS', 'LO QUE SIGNIFICA', 'QUÉ SIGNIFICA'],
-        'why': ['WHY', 'POR QUÉ'],
-        'sayThis': ['SAY THIS', 'DI ESTO', 'DICE ESTO'],
-        'whatToDo': ['WHAT TO DO', 'QUÉ HACER']
-      },
-      'de': {
-        'sheMeans': ['SHE MEANS', 'SIE MEINT', 'WAS SIE MEINT'],
-        'whatItMeans': ['WHAT IT MEANS', 'WAS ES BEDEUTET'],
-        'why': ['WHY', 'WARUM'],
-        'sayThis': ['SAY THIS', 'SAG DAS', 'SAGE DAS'],
-        'whatToDo': ['WHAT TO DO', 'WAS TUN']
-      }
-    };
-
-    // Get translated headers for the instruction
-    const getTranslatedHeaders = (lang: string) => {
-      const headers = headerTranslations[lang];
-      if (!headers) return null;
-      return {
-        sheMeans: headers.sheMeans[1] || 'SHE MEANS',
-        whatItMeans: headers.whatItMeans[1] || 'WHAT IT MEANS',
-        why: headers.why[1] || 'WHY',
-        sayThis: headers.sayThis[1] || 'SAY THIS',
-        whatToDo: headers.whatToDo[1] || 'WHAT TO DO'
-      };
-    };
-
-    const translatedHeaders = language !== 'en' ? getTranslatedHeaders(language) : null;
-
-    const languageInstruction = language !== 'en' && translatedHeaders
-      ? `\n\n🌍 CRITICAL LANGUAGE REQUIREMENT: 
-      
-You MUST respond ENTIRELY in ${languageNames[language]}. This includes:
-- ALL section headers (translate them to ${languageNames[language]})
-- ALL content text
-- EVERY SINGLE WORD
-
-Use these EXACT headers in ${languageNames[language]}:
-- **${translatedHeaders.sheMeans}:** or **${translatedHeaders.whatItMeans}:**
-- **${translatedHeaders.why}:**
-- **${translatedHeaders.sayThis}:**
-- **${translatedHeaders.whatToDo}:**
-
-NO English words anywhere. NO meta-commentary. NO translation notes. PURE ${languageNames[language]} ONLY.`
-      : '';
-
     const { text: response } = await generateText({
       model: groq("llama-3.3-70b-versatile"), // Fast Llama3 on Groq
       messages: [
-        { role: "system", content: WOMANSLATOR_PROMPT + languageInstruction },
+        { role: "system", content: WOMANSLATOR_PROMPT },
         { role: "user", content: `She said/did: "${text}"\n\nTranslate this.` },
       ],
     });
 
-    // Log response for debugging
-    console.log('Womanslator response:', response.substring(0, 500));
+    // Parse the response into sections (English only)
+    const sheMeansMatch = response.match(/\*\*(?:SHE MEANS|WHAT IT MEANS):\*\*\s*([\s\S]*?)(?=\*\*WHY:\*\*)/i);
+    const whyMatch = response.match(/\*\*WHY:\*\*\s*([\s\S]*?)(?=\*\*SAY THIS:\*\*)/i);
+    const sayThisMatch = response.match(/\*\*SAY THIS:\*\*\s*([\s\S]*?)(?=\*\*WHAT TO DO:\*\*)/i);
+    const whatToDoMatch = response.match(/\*\*WHAT TO DO:\*\*\s*([\s\S]*?)$/i);
 
-    // Parse the response into sections - handle both English and translated headers
-    const getHeaderPattern = (headers: string[]) => {
-      return new RegExp(`\\*\\*(${headers.join('|')}):\\*\\*`, 'i');
-    };
-
-    // Try to find section boundaries with multiple header variations
-    const sheMeansHeaders = language !== 'en' && headerTranslations[language]
-      ? ['SHE MEANS', 'WHAT IT MEANS', ...headerTranslations[language].sheMeans, ...headerTranslations[language].whatItMeans]
-      : ['SHE MEANS', 'WHAT IT MEANS'];
-    
-    const whyHeaders = language !== 'en' && headerTranslations[language]
-      ? ['WHY', ...headerTranslations[language].why]
-      : ['WHY'];
-    
-    const sayThisHeaders = language !== 'en' && headerTranslations[language]
-      ? ['SAY THIS', ...headerTranslations[language].sayThis]
-      : ['SAY THIS'];
-    
-    const whatToDoHeaders = language !== 'en' && headerTranslations[language]
-      ? ['WHAT TO DO', ...headerTranslations[language].whatToDo]
-      : ['WHAT TO DO'];
-
-    // Build regex patterns that match any of the possible headers
-    const sheMeansPattern = getHeaderPattern(sheMeansHeaders);
-    const whyPattern = getHeaderPattern(whyHeaders);
-    const sayThisPattern = getHeaderPattern(sayThisHeaders);
-    const whatToDoPattern = getHeaderPattern(whatToDoHeaders);
-
-    // Find all section markers
-    const sheMeansIndex = response.search(sheMeansPattern);
-    const whyIndex = response.search(whyPattern);
-    const sayThisIndex = response.search(sayThisPattern);
-    const whatToDoIndex = response.search(whatToDoPattern);
-
-    // Extract content between sections
-    const sheMeans = sheMeansIndex !== -1 && whyIndex !== -1
-      ? response.substring(sheMeansIndex, whyIndex).replace(sheMeansPattern, '').trim()
-      : null;
-    
-    const why = whyIndex !== -1 && sayThisIndex !== -1
-      ? response.substring(whyIndex, sayThisIndex).replace(whyPattern, '').trim()
-      : null;
-    
-    const sayThis = sayThisIndex !== -1 && whatToDoIndex !== -1
-      ? response.substring(sayThisIndex, whatToDoIndex).replace(sayThisPattern, '').trim()
-      : null;
-    
-    const whatToDo = whatToDoIndex !== -1
-      ? response.substring(whatToDoIndex).replace(whatToDoPattern, '').trim()
-      : null;
-
-    // Log parsing results for debugging
-    if (!sheMeans || !why || !sayThis || !whatToDo) {
-      console.log('Parsing issues detected:', {
-        sheMeans: !!sheMeans,
-        why: !!why,
-        sayThis: !!sayThis,
-        whatToDo: !!whatToDo,
-        responseLength: response.length,
-        responsePreview: response.substring(0, 300)
-      });
-    }
-
-    const sheMeansText = sheMeans || "Translation unavailable";
-    const whyText = why || "Explanation unavailable";
-    let sayThisText = sayThis || "Response unavailable";
-    const whatToDoText = whatToDo || "Advice unavailable";
+    const sheMeansText = sheMeansMatch?.[1]?.trim() || "Translation unavailable";
+    const whyText = whyMatch?.[1]?.trim() || "Explanation unavailable";
+    let sayThisText = sayThisMatch?.[1]?.trim() || "Response unavailable";
+    const whatToDoText = whatToDoMatch?.[1]?.trim() || "Advice unavailable";
 
     // Clean up SAY THIS section
     // Remove quotes from SAY THIS if present
