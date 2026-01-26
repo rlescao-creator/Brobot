@@ -1195,7 +1195,17 @@ export async function POST(req: Request) {
     };
 
     const languageInstruction = language !== 'en' 
-      ? `\n\n🌍 LANGUAGE REQUIREMENT: Respond ENTIRELY in ${languageNames[language]}. Translate all labels, explanations, and advice into ${languageNames[language]}. Keep the same format (SHE MEANS/WHAT IT MEANS, WHY, SAY THIS, WHAT TO DO) but in ${languageNames[language]}.`
+      ? `\n\n🌍 CRITICAL LANGUAGE REQUIREMENT: 
+      
+You MUST respond in ${languageNames[language]}, BUT keep the section headers EXACTLY as they are in English:
+- **SHE MEANS:** or **WHAT IT MEANS:**
+- **WHY:**
+- **SAY THIS:**
+- **WHAT TO DO:**
+
+ONLY translate the CONTENT inside each section, NOT the headers. The headers must stay in English for parsing.
+
+Every single word of CONTENT must be in ${languageNames[language]}. NO English words in the content. NO meta-commentary. NO translation notes. PURE ${languageNames[language]} ONLY for all content text.`
       : '';
 
     const { text: response } = await generateText({
@@ -1206,11 +1216,11 @@ export async function POST(req: Request) {
       ],
     });
 
-    // Parse the response into sections
-    const sheMeansMatch = response.match(/\*\*SHE MEANS:\*\*\s*([\s\S]*?)(?=\*\*WHY:\*\*)/);
-    const whyMatch = response.match(/\*\*WHY:\*\*\s*([\s\S]*?)(?=\*\*SAY THIS:\*\*)/);
-    const sayThisMatch = response.match(/\*\*SAY THIS:\*\*\s*([\s\S]*?)(?=\*\*WHAT TO DO:\*\*)/);
-    const whatToDoMatch = response.match(/\*\*WHAT TO DO:\*\*\s*([\s\S]*?)$/);
+    // Parse the response into sections (case-insensitive, handle variations)
+    const sheMeansMatch = response.match(/\*\*(?:SHE MEANS|WHAT IT MEANS):\*\*\s*([\s\S]*?)(?=\*\*WHY:\*\*)/i);
+    const whyMatch = response.match(/\*\*WHY:\*\*\s*([\s\S]*?)(?=\*\*SAY THIS:\*\*)/i);
+    const sayThisMatch = response.match(/\*\*SAY THIS:\*\*\s*([\s\S]*?)(?=\*\*WHAT TO DO:\*\*)/i);
+    const whatToDoMatch = response.match(/\*\*WHAT TO DO:\*\*\s*([\s\S]*?)$/i);
 
     const sheMeans = sheMeansMatch?.[1]?.trim() || "Translation unavailable";
     const why = whyMatch?.[1]?.trim() || "Explanation unavailable";
